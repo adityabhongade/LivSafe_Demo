@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Loading LivSafe Demo</title>
+  </head>
+  <body>
+    <p>Loading LivSafe Demo…</p>
+    <script>
+      (function () {
+        var base = "/LivSafe_Demo";
+        var path = window.location.pathname.slice(base.length) || "/";
+        var route = path + window.location.search + window.location.hash;
+        window.location.replace(base + "/?__gh_route=" + encodeURIComponent(route));
+      })();
+    </script>
+  </body>
+</html>

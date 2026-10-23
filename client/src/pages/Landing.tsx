@@ -1,20 +1,29 @@
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'wouter';
 import { Navbar } from '@/components/Navbar';
 import { LandingHero } from '@/components/landing/LandingHero';
-import { LandingPrinciples } from '@/components/landing/LandingPrinciples';
+import './Landing.css';
 
 export default function Landing() {
   return (
-    <div className="landing-page min-h-screen">
+    <div className="landing-page">
       <Navbar variant="public" />
       <main>
         <LandingHero />
-        <LandingPrinciples />
+        <section className="ref-invitation" aria-labelledby="invitation-title">
+          <div>
+            <h2 id="invitation-title">A tool for careful review.</h2>
+            <p>Every result is a draft for clinician review, with model limitations kept in view.</p>
+          </div>
+          <Link href="/login" className="ref-button ref-button--primary">
+            Create an account <ArrowRight aria-hidden="true" size={17} />
+          </Link>
+        </section>
       </main>
       <footer className="landing-footer">
         <div className="landing-footer__inner">
           <span>LivSafe</span>
-          <p>Decision support only. Not a diagnosis. Requires clinician review.</p>
+          <p>Demo experience · Simulated outputs only. Not for clinical use.</p>
           <Link href="/about">About LivSafe</Link>
         </div>
       </footer>

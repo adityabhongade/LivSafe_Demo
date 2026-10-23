@@ -2,8 +2,9 @@
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, Mail, Printer, Save, MessageSquare, LoaderCircle, ScanSearch } from 'lucide-react';
+import { FileText, Mail, Printer, Save, MessageSquare, LoaderCircle, ScanSearch, Info, Maximize2, ZoomIn, ZoomOut, RotateCcw, X } from 'lucide-react';
 import { medicalImagesAPI } from '@/lib/api';
+import { sitePath } from '@/lib/utils';
 
 interface PatientInfo {
   id: string;
@@ -27,6 +28,17 @@ interface GradeResultProps {
   analysis: string[];
 }
 
+const MODEL_FLAG_LABELS: Record<string, string> = {
+  low_confidence: 'Low model score; review the image carefully.',
+  ood_suspected: 'This image may be outside the model’s validated range.',
+  low_quality: 'Image quality may affect this result.',
+};
+
+function describeModelFlag(flag: string): string {
+  if (MODEL_FLAG_LABELS[flag]) return MODEL_FLAG_LABELS[flag];
+  return flag.replace(/[_-]+/g, ' ').replace(/^\w/, (letter) => letter.toUpperCase());
+}
+
 export function GradeResult({
   patientInfo,
   fibrosis,
@@ -40,10 +52,23 @@ export function GradeResult({
   const [activationMapUrl, setActivationMapUrl] = useState<string | null>(null);
   const [isGeneratingMap, setIsGeneratingMap] = useState(false);
   const [explanationError, setExplanationError] = useState('');
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   useEffect(() => () => {
     if (activationMapUrl) URL.revokeObjectURL(activationMapUrl);
   }, [activationMapUrl]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullScreen) {
+        setIsFullScreen(false);
+        setZoomLevel(1);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullScreen]);
 
   const handleGenerateActivationMap = async () => {
     if (!medicalImageId) return;
@@ -87,10 +112,10 @@ export function GradeResult({
       const timestamp = currentTime.toLocaleString();
       const dateString = currentTime.toISOString().split('T')[0];
       
-      // Load and add circular logo
+      // Load and add circular LivSafe logo
       try {
         const { loadCircularImageDataURL } = await import('@/lib/pdfUtils');
-        const logoUrl = (await import('@/lib/images/TR_logo.png')).default as string;
+        const logoUrl = sitePath('logos/livsafe-app-icon.svg');
         const circleDataURL = await loadCircularImageDataURL(logoUrl, 256, { borderColor: '#1f2937', borderWidth: 1.5 });
         doc.addImage(circleDataURL, 'PNG', 20, 15, 28, 28);
       } catch (error) {
@@ -130,7 +155,7 @@ export function GradeResult({
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
       doc.text(`Fibrosis Grade: ${fibrosis.grade}`, 20, 155);
-      doc.text(`Uncalibrated model score: ${Math.round(fibrosis.confidence)}%`, 20, 165);
+      doc.text(`Uncalibrated model score: ${(fibrosis.confidence <= 1 && fibrosis.confidence > 0 ? fibrosis.confidence * 100 : fibrosis.confidence).toFixed(2)}%`, 20, 165);
       doc.text('Status: Draft - requires clinician review', 20, 175);
       doc.text('Decision support only. Not a diagnosis.', 20, 185);
       if (modelVersion) doc.text(`Model: ${modelVersion}`, 20, 195);
@@ -139,7 +164,7 @@ export function GradeResult({
         doc.setFontSize(11);
         doc.text('Uncalibrated class scores:', 20, 210);
         doc.text(['F0', 'F1', 'F2', 'F3', 'F4']
-          .map((label) => `${label}: ${(probabilities[label as keyof typeof probabilities] * 100).toFixed(1)}%`)
+          .map((label) => `${label}: ${(probabilities[label as keyof typeof probabilities] * 100).toFixed(2)}%`)
           .join('    '), 20, 219);
       }
       
@@ -232,13 +257,13 @@ export function GradeResult({
             
             <h2>Assessment Results</h2>
             <p><strong>Fibrosis Grade:</strong> ${fibrosis.grade}</p>
-            <p><strong>Uncalibrated model score:</strong> ${Math.round(fibrosis.confidence)}%</p>
+            <p><strong>Uncalibrated model score:</strong> ${(fibrosis.confidence <= 1 && fibrosis.confidence > 0 ? fibrosis.confidence * 100 : fibrosis.confidence).toFixed(2)}%</p>
             <p><strong>Status:</strong> Draft - requires clinician review</p>
             <p>Decision support only. Not a diagnosis.</p>
             
             <h2>Model output</h2>
             ${analysis.map(item => `<p>${item}</p>`).join('')}
-            ${probabilities ? `<h2>Uncalibrated class scores</h2>${Object.entries(probabilities).map(([label, score]) => `<p>${label}: ${(score * 100).toFixed(1)}%</p>`).join('')}` : ''}
+            ${probabilities ? `<h2>Uncalibrated class scores</h2>${Object.entries(probabilities).map(([label, score]) => `<p>${label}: ${(score * 100).toFixed(2)}%</p>`).join('')}` : ''}
             
             <hr>
             <p><em>Generated: ${new Date().toLocaleString()}</em></p>
@@ -354,11 +379,14 @@ export function GradeResult({
           </div>
           
           <div className="bg-primary-800 rounded-xl p-6">
-            <h3 className="text-lg font-medium text-primary-100 mb-4">Classifier output</h3>
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <h3 className="text-lg font-medium text-primary-100">Model output</h3>
+              <span className="draft-status">Draft · clinician review required</span>
+            </div>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-primary-300">Top-ranked class:</span>
+                  <span className="text-primary-300">Top model estimate:</span>
                   <span className={`font-bold ${gradeToColorClass[fibrosis.grade]}`}>
                     {fibrosis.grade}
                   </span>
@@ -367,29 +395,38 @@ export function GradeResult({
               
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="text-primary-300">Uncalibrated model score:</span>
-                  <span className="font-medium text-white">{Math.round(fibrosis.confidence)}%</span>
+                  <span className="text-primary-300">Model score:</span>
+                  <span className="font-medium text-white">{(fibrosis.confidence <= 1 && fibrosis.confidence > 0 ? fibrosis.confidence * 100 : fibrosis.confidence).toFixed(2)}%</span>
                 </div>
-                <p className="text-xs text-amber-200">Scores are uncalibrated, not clinical confidence.</p>
+                <p className="text-warning text-xs">Uncalibrated; this is not clinical confidence.</p>
               </div>
               {probabilities && (
                 <div className="space-y-3 border-t border-primary-600 pt-4">
-                  <h4 className="text-sm font-medium text-primary-100">All class scores</h4>
+                  <h4 className="text-sm font-medium text-primary-100">Scores by stage</h4>
                   {(['F0', 'F1', 'F2', 'F3', 'F4'] as const).map((label) => (
                     <div key={label}>
                       <div className="mb-1 flex justify-between text-xs">
                         <span className="text-primary-300">{label}</span>
-                        <span className="text-white">{(probabilities[label] * 100).toFixed(1)}%</span>
+                        <span className="text-white">{(probabilities[label] * 100).toFixed(2)}%</span>
                       </div>
                       <Progress value={probabilities[label] * 100} className="h-1.5 bg-primary-600" />
                     </div>
                   ))}
                 </div>
               )}
-              {modelVersion && <p className="text-xs text-primary-300">Model: {modelVersion}</p>}
-              {flags.length > 0 && (
-                <div className="rounded-md border border-amber-300/30 bg-amber-950/30 p-3 text-xs text-amber-100">
-                  Model flags: {flags.join(', ')}
+              {modelVersion && (
+                <details className="model-provenance">
+                  <summary>Model provenance</summary>
+                  <code>{modelVersion}</code>
+                </details>
+              )}
+              {flags.some((flag) => flag !== 'uncalibrated_scores') && (
+                <div className="clinical-warning rounded-md p-3 text-xs">
+                  <ul className="space-y-1">
+                    {flags.filter((flag) => flag !== 'uncalibrated_scores').map((flag) => (
+                      <li key={flag}>{describeModelFlag(flag)}</li>
+                    ))}
+                  </ul>
                 </div>
               )}
               {medicalImageId && (
@@ -408,16 +445,71 @@ export function GradeResult({
                   <p className="mt-2 text-xs text-primary-300">
                     Grad-CAM highlights model activation. Indicative only; not proof of model reasoning.
                   </p>
-                  {explanationError && <p className="mt-2 text-xs text-amber-200" role="alert">{explanationError}</p>}
+                  {explanationError && <p className="text-warning mt-2 text-xs" role="alert">{explanationError}</p>}
                   {activationMapUrl && (
                     <figure className="mt-4">
-                      <img
-                        src={activationMapUrl}
-                        alt={`Grad-CAM activation visualization for predicted class ${fibrosis.grade}`}
-                        className="w-full rounded-md border border-primary-600"
-                      />
-                      <figcaption className="mt-2 text-xs text-primary-300">
-                        Activation visualization for class {fibrosis.grade}. Not a diagnostic finding.
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-primary-200">
+                          Activation map · {fibrosis.grade}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setZoomLevel(1);
+                            setIsFullScreen(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 rounded-md border border-primary-500 bg-primary-800/90 px-2.5 py-1 text-xs font-medium text-primary-100 hover:bg-primary-700 hover:text-white transition shadow-sm"
+                          title="View Grad-CAM in full screen"
+                        >
+                          <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          <span>Full screen</span>
+                        </button>
+                      </div>
+
+                      <div
+                        onClick={() => {
+                          setZoomLevel(1);
+                          setIsFullScreen(true);
+                        }}
+                        className="group relative cursor-zoom-in overflow-hidden rounded-md border border-primary-600"
+                        title="Click to view full screen"
+                      >
+                        <img
+                          src={activationMapUrl}
+                          alt={`Grad-CAM composite visualization for predicted class ${fibrosis.grade}: original image, overlay, and activation heatmap`}
+                          className="w-full transition-transform duration-200 group-hover:scale-[1.01]"
+                        />
+                        <div className="absolute inset-0 bg-primary-950/0 group-hover:bg-primary-950/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none">
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-900/90 px-3 py-1.5 text-xs font-medium text-white shadow-lg border border-primary-500/50">
+                            <Maximize2 className="h-3.5 w-3.5" /> Click for full screen
+                          </span>
+                        </div>
+                      </div>
+
+                      <figcaption className="mt-3.5 space-y-2.5 rounded-lg border border-primary-600 bg-primary-900/60 p-3 text-xs text-primary-200">
+                        {/* Color Scale */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                          <span className="text-primary-300 font-medium">Color scale:</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-blue-400 font-medium">Blue (Low activation)</span>
+                            <div
+                              className="h-2 w-24 rounded-full shadow-inner"
+                              style={{
+                                background: 'linear-gradient(to right, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000)',
+                              }}
+                              aria-hidden="true"
+                            />
+                            <span className="text-rose-400 font-medium">Red (High activation)</span>
+                          </div>
+                        </div>
+
+                        {/* Indicative Disclaimer */}
+                        <div className="text-warning flex items-start gap-1.5 border-t border-primary-700/60 pt-2 text-[11px]">
+                          <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" aria-hidden="true" />
+                          <span>
+                            <strong className="font-semibold">Indicative only:</strong> Visualizes attention weights of the vision model; not a diagnostic finding or proof of medical reasoning.
+                          </span>
+                        </div>
                       </figcaption>
                     </figure>
                   )}
@@ -427,8 +519,8 @@ export function GradeResult({
           </div>
         </div>
         
-        <div className="bg-primary-800 rounded-xl p-6">
-          <h3 className="text-lg font-medium text-primary-100 mb-4">Model output</h3>
+        {analysis.length > 1 && <div className="bg-primary-800 rounded-xl p-6">
+          <h3 className="text-lg font-medium text-primary-100 mb-4">Additional assessment notes</h3>
           <div className="text-primary-200 space-y-4">
             <p>{analysis[0]}</p>
             <ul className="list-disc pl-5 space-y-2">
@@ -438,7 +530,7 @@ export function GradeResult({
             </ul>
             <p>{analysis[analysis.length - 1]}</p>
           </div>
-        </div>
+        </div>}
       </div>
       
       <div className="mt-8 flex flex-wrap gap-4">
@@ -472,17 +564,149 @@ export function GradeResult({
         </button>
         <button 
           onClick={() => {
-            const chatUrl = medicalImageId
-              ? `/chat?medicalImageId=${encodeURIComponent(medicalImageId)}`
-              : '/chat';
-            window.open(chatUrl, '_blank', 'noopener,noreferrer');
+            const chatPath = medicalImageId
+              ? `chat?medicalImageId=${encodeURIComponent(medicalImageId)}`
+              : 'chat';
+            window.open(sitePath(chatPath), '_blank', 'noopener,noreferrer');
           }}
           className="flex items-center gap-2 bg-accent text-white px-6 py-2.5 rounded-lg font-medium hover:bg-accent/90 transition"
         >
           <MessageSquare className="h-5 w-5" />
-          Chat with Livsafe
+          Chat with LivSafe
         </button>
       </div>
+
+      {/* Full-Screen Grad-CAM Lightbox Modal */}
+      {isFullScreen && activationMapUrl && (
+        <div
+          className="gradcam-viewer fixed inset-0 z-50 flex flex-col bg-slate-950/95 backdrop-blur-md animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Grad-CAM full screen viewer"
+        >
+          {/* Top Bar */}
+          <div className="gradcam-viewer__bar flex items-center justify-between border-b border-primary-700/80 bg-primary-900/90 px-4 py-3 md:px-6">
+            <div className="gradcam-viewer__identity">
+              <h2 className="gradcam-viewer__title text-base md:text-lg font-semibold text-white flex items-center gap-2">
+                Grad-CAM activation map
+              </h2>
+              <p className="gradcam-viewer__metadata">
+                Class {fibrosis.grade} <span aria-hidden="true">·</span> Patient {patientInfo.name} <span>({patientInfo.id})</span>
+              </p>
+              {modelVersion && <p className="gradcam-viewer__model"><span>Model</span> {modelVersion}</p>}
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-1 rounded-md border border-primary-700 bg-primary-800/80 p-1 mr-2">
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel((z) => Math.max(z - 0.25, 0.75))}
+                  className="rounded p-1 text-primary-200 hover:bg-primary-700 hover:text-white transition"
+                  title="Zoom out"
+                >
+                  <ZoomOut className="h-4 w-4" />
+                </button>
+                <span className="px-2 text-xs font-mono text-primary-200">
+                  {Math.round(zoomLevel * 100)}%
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel((z) => Math.min(z + 0.25, 3))}
+                  className="rounded p-1 text-primary-200 hover:bg-primary-700 hover:text-white transition"
+                  title="Zoom in"
+                >
+                  <ZoomIn className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel(1)}
+                  className="rounded p-1 text-primary-200 hover:bg-primary-700 hover:text-white transition ml-1 border-l border-primary-700 pl-1.5"
+                  title="Reset zoom"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                  } else {
+                    document.exitFullscreen().catch(() => {});
+                  }
+                }}
+                className="rounded-md border border-primary-600 bg-primary-800 p-2 text-primary-200 hover:bg-primary-700 hover:text-white transition"
+                title="Toggle browser fullscreen"
+              >
+                <Maximize2 className="h-4 w-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsFullScreen(false);
+                  setZoomLevel(1);
+                }}
+                className="rounded-md border border-primary-600 bg-primary-800 p-2 text-primary-200 hover:bg-rose-900/60 hover:text-rose-200 transition"
+                title="Close (Esc)"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Image Display Area */}
+          <div
+            className="gradcam-viewer__canvas flex-1 overflow-auto p-4 md:p-8 flex items-center justify-center cursor-default"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setIsFullScreen(false);
+                setZoomLevel(1);
+              }
+            }}
+          >
+            <div className="relative flex items-center justify-center transition-transform duration-150">
+              <img
+                src={activationMapUrl}
+                alt={`Full screen Grad-CAM visualization for class ${fibrosis.grade}`}
+                style={{
+                  transform: `scale(${zoomLevel})`,
+                  transformOrigin: 'center center',
+                  transition: 'transform 0.15s ease-out',
+                }}
+                className="max-h-[75vh] w-auto max-w-full rounded-lg border border-primary-700 shadow-2xl object-contain select-none"
+              />
+            </div>
+          </div>
+
+          {/* Bottom Bar: Legend */}
+          <div className="gradcam-viewer__bar border-t border-primary-700/80 bg-primary-900/90 px-4 py-3 md:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-primary-200 max-w-7xl mx-auto">
+              {/* Color Scale */}
+              <div className="flex items-center gap-2">
+                <span className="text-primary-300 font-medium">Color scale:</span>
+                <span className="text-blue-400 font-medium">Blue (Low)</span>
+                <div
+                  className="h-2.5 w-28 rounded-full shadow-inner"
+                  style={{
+                    background: 'linear-gradient(to right, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000)',
+                  }}
+                  aria-hidden="true"
+                />
+                <span className="text-rose-400 font-medium">Red (High)</span>
+              </div>
+
+              {/* Hint */}
+              <div className="text-[11px] text-primary-400 hidden lg:block">
+                Press <kbd className="px-1.5 py-0.5 rounded bg-primary-800 border border-primary-700 font-mono text-[10px]">Esc</kbd> or click outside to exit
+              </div>
+            </div>
+            <p className="gradcam-viewer__disclaimer">Indicative only. Highlights model activation; it does not prove model reasoning.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

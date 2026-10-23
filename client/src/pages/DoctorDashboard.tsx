@@ -8,6 +8,7 @@ import { ChartDistribution } from '@/components/ChartDistribution';
 import { DownloadDropdown } from '@/components/DownloadDropdown';
 import { useToast } from '@/hooks/use-toast';
 import { doctorAPI, patientAPI } from '@/lib/api';
+import { sitePath } from '@/lib/utils';
 import { FolderOpen, ChartLine, CheckCircle2, Plus, PieChart, RefreshCw, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -278,7 +279,7 @@ export default function DoctorDashboard() {
       // Load and add circular logo
       try {
         const { loadCircularImageDataURL } = await import('@/lib/pdfUtils');
-        const logoUrl = (await import('@/lib/images/TR_logo.png')).default as string;
+      const logoUrl = sitePath('logos/livsafe-app-icon.svg');
         // Render at high pixel density for crisp output
         const circleDataURL = await loadCircularImageDataURL(logoUrl, 256, { borderColor: '#1f2937', borderWidth: 1.5 });
         // Place circular logo (display ~28mm for good clarity)
@@ -507,7 +508,7 @@ export default function DoctorDashboard() {
       <button 
         className="fixed bottom-4 right-4 bg-accent hover:bg-accent/90 text-white p-4 rounded-full shadow-lg focus:outline-none z-50 transition-all duration-200 hover:scale-105"
         title="Open Medical Chat with Dr. Thompson"
-        onClick={() => window.open('/chat', '_blank')}
+        onClick={() => window.open(sitePath('chat'), '_blank')}
       >
         <MessageCircle className="h-6 w-6" />
       </button>

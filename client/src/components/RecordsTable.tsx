@@ -42,7 +42,7 @@ export function RecordsTable({
   onDownloadRecord
 }: RecordsTableProps) {
   return (
-    <div className="bg-primary-700 rounded-xl border border-primary-600 overflow-hidden shadow-lg">
+      <div className="records-table bg-primary-700 rounded-xl border border-primary-600 overflow-hidden shadow-lg">
       <div className="p-6 border-b border-primary-500 flex justify-between items-center bg-primary-800">
         <h2 className="text-xl font-bold text-white">{title}</h2>
         {isSearchResult && (
@@ -84,7 +84,7 @@ export function RecordsTable({
                   </td>
                   {showConfidence && record.confidence && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-primary-100">{record.confidence}%</div>
+                      <div className="text-sm font-medium text-primary-100">{Number(record.confidence).toFixed(2)}%</div>
                     </td>
                   )}
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -117,7 +117,7 @@ export function RecordsTable({
                           const chatUrl = `/chat?medicalImageId=${encodeURIComponent(medicalImageId)}`;
                           window.open(chatUrl, '_blank', 'noopener,noreferrer');
                         }}
-                        title="Discuss this image with MedGemma"
+                        title="Discuss this image with the demo assistant"
                       >
                         <MessageSquare className="h-5 w-5" />
                       </button>

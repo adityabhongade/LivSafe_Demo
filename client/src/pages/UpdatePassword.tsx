@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react';
 import { authAPI } from '@/lib/api';
+import { sitePath } from '@/lib/utils';
 
 const formSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
@@ -64,9 +65,9 @@ export default function UpdatePassword() {
       // Redirect to dashboard after a short delay
       setTimeout(() => {
         if (user?.type === 'organization') {
-          window.location.href = '/organization/dashboard';
+          window.location.href = sitePath('organization/dashboard');
         } else {
-          window.location.href = '/doctor/dashboard';
+          window.location.href = sitePath('doctor/dashboard');
         }
       }, 2000);
       
@@ -83,7 +84,7 @@ export default function UpdatePassword() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar userType={user?.type || 'doctor'} showAuthButtons={false} />
+      <Navbar userType={user?.type === 'organization' ? 'organization' : 'doctor'} showAuthButtons={false} />
 
       <section className="py-12 bg-primary-800">
         <div className="max-w-md mx-auto px-6">

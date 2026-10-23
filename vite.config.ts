@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
+  // GitHub Pages serves this repository under /LivSafe_Demo/; local Vite stays at /.
+  base: process.env.GITHUB_PAGES === "true" ? "/LivSafe_Demo/" : "/",
   plugins: [react()],
   resolve: {
     alias: {

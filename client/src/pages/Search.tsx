@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { doctorAPI } from '@/lib/api';
+import { sitePath } from '@/lib/utils';
 
 export default function Search() {
   const { toast } = useToast();
@@ -141,7 +142,7 @@ export default function Search() {
       // Load and add circular logo
       try {
         const { loadCircularImageDataURL } = await import('@/lib/pdfUtils');
-        const logoUrl = (await import('@/lib/images/TR_logo.png')).default as string;
+        const logoUrl = sitePath('logos/livsafe-app-icon.svg');
         const circleDataURL = await loadCircularImageDataURL(logoUrl, 256, { borderColor: '#1f2937', borderWidth: 1.5 });
         doc.addImage(circleDataURL, 'PNG', 20, 15, 28, 28);
       } catch (error) {

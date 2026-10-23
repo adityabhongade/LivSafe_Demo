@@ -1,45 +1,44 @@
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { Link } from 'wouter';
+import { sitePath } from '@/lib/utils';
 
 export function LandingHero() {
   return (
-    <section className="landing-hero" aria-labelledby="landing-title">
-      <div className="landing-hero__content">
-        <div className="landing-hero__copy">
-          <p className="landing-kicker">
-            <span className="landing-kicker__mark" aria-hidden="true" />
-            Liver fibrosis review
-          </p>
-          <h1 id="landing-title">A clearer view of the evidence.</h1>
-          <p className="landing-hero__description">
-            LivSafe is being built to support clinicians reviewing liver ultrasound findings,
-            with careful attention to uncertainty and clinical context.
-          </p>
-          <div className="landing-hero__actions">
-            <Link href="/login" className="landing-button landing-button--primary">
-              Sign in <ArrowRight aria-hidden="true" size={17} />
-            </Link>
-            <Link href="/signup" className="landing-button landing-button--secondary">
-              Create account
-            </Link>
-          </div>
-          <p className="landing-hero__disclaimer">
-            <ShieldCheck aria-hidden="true" size={17} />
-            Decision support only. Not a diagnosis. Requires clinician review.
-          </p>
+    <section className="ref-hero" aria-labelledby="landing-title">
+      <div className="ref-hero__copy">
+        <h1 id="landing-title">Liver ultrasound review, with care.</h1>
+        <p className="ref-hero__intro">
+          Explore a simulated version of LivSafe’s clinician-led liver ultrasound review workflow.
+        </p>
+        <p className="ref-hero__detail">
+          Review sample records, illustrative class scores, an activation-map mockup, and example assistant responses.
+        </p>
+        <div className="ref-hero__actions">
+          <Link href="/login" className="ref-button ref-button--primary">
+            Sign in <ArrowRight aria-hidden="true" size={17} />
+          </Link>
         </div>
-
-        <figure className="landing-hero__image">
-          <img
-            src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1400&q=85"
-            alt="Clinician reviewing a medical image on a screen"
-          />
-          <figcaption>
-            <span className="landing-image-label__dot" aria-hidden="true" />
-            Built around clinician review
-          </figcaption>
-        </figure>
+        <p className="ref-hero__safety">
+          <ShieldCheck aria-hidden="true" size={18} />
+          Demo only. Simulated outputs. Not for clinical use.
+        </p>
       </div>
+      <figure className="ref-hero__visual">
+        <div className="ref-hero__photo-field">
+          <img
+            src={sitePath('liver-fibroscan-transient-elastography-lsm-cap-navi.jpg')}
+            alt="A clinician reviewing a FibroScan measurement during an examination"
+            width="1500"
+            height="1377"
+            fetchPriority="high"
+          />
+        </div>
+        <figcaption>
+          <a href="https://commons.wikimedia.org/wiki/File:Liver_Fibroscan_Transient_Elastography_LSM_CAP_Navi_Mumbai.jpg" target="_blank" rel="noreferrer">
+            Image: Goleisureintl · CC BY 4.0
+          </a>
+        </figcaption>
+      </figure>
     </section>
   );
 }

@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { doctorAPI } from '@/lib/api';
+import { sitePath } from '@/lib/utils';
 
 interface UploadedRecord {
   id: string;
@@ -46,17 +47,17 @@ export default function GradeReport() {
 
   const handleLoadSampleScan = async () => {
     try {
-      const response = await fetch('/sample-ultrasound.png');
+      const response = await fetch(sitePath('sample-ultrasound.png'));
       const blob = await response.blob();
       const file = new File([blob], 'sample-liver-ultrasound.png', { type: 'image/png' });
       setUploadedFile(file);
-      setPatientName('Marcus Vance');
+      setPatientName('Sample Patient');
       setPatientAge('52');
       setPatientGender('male');
       setUploadedRecord(null);
       toast({
-        title: 'Sample ultrasound scan loaded',
-        description: 'Patient Marcus Vance (52, M) ready for classification.',
+        title: 'Sample ultrasound loaded',
+        description: 'Sample patient data is for demonstration only.',
         className: 'text-white',
       });
     } catch {
@@ -92,7 +93,7 @@ export default function GradeReport() {
 
       const result = await doctorAPI.createRecord(formData);
 
-      const medicalImageId = result.medicalImageId || result.medicalImage?._id;
+      const medicalImageId = result.medicalImageId;
       if (!medicalImageId) throw new Error('Upload succeeded but the image record identifier was not returned.');
 
       setUploadedRecord({
@@ -128,24 +129,24 @@ export default function GradeReport() {
     <div className="bg-background min-h-screen">
       <Navbar userType="doctor" showAuthButtons={false} />
       
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-background grade-workspace">
         <div className="max-w-4xl mx-auto px-6">
           <div className="mb-8">
             <Link href="/doctor/dashboard" className="inline-flex items-center text-primary-300 hover:text-white transition">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Dashboard
             </Link>
-            <h1 className="text-3xl font-bold text-white mt-4">Upload Ultrasound for Review</h1>
+            <h1 className="text-3xl font-bold mt-4">Upload ultrasound for review</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-primary-300">
               Classification is decision support only, not a diagnosis. Model scores are uncalibrated and require clinician review.
             </p>
           </div>
           
-          <div className="bg-primary-700 rounded-xl border border-primary-600 p-6 md:p-8">
+          <div className="grade-form bg-primary-700 rounded-xl p-6 md:p-8">
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <Label htmlFor="patientName" className="text-primary-100">Patient Name</Label>
+                  <Label htmlFor="patientName" className="text-primary-100">Patient name</Label>
                   <Input 
                     id="patientName" 
                     value={patientName}
@@ -157,7 +158,7 @@ export default function GradeReport() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="patientAge" className="text-primary-100">Age</Label>
+                  <Label htmlFor="patientAge" className="text-primary-100">Age</Label>
                     <Input 
                       id="patientAge" 
                       type="number" 
@@ -169,12 +170,12 @@ export default function GradeReport() {
                   </div>
                   
                   <div>
-                    <Label htmlFor="patientGender" className="text-white">Gender</Label>
+                    <Label htmlFor="patientGender" className="text-primary-100">Gender</Label>
                     <Select onValueChange={setPatientGender}>
                       <SelectTrigger className="bg-white text-black">
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
-                      <SelectContent className="bg-black border-primary-600 text-white">
+                      <SelectContent className="bg-white border-primary-600 text-primary-100">
                         <SelectItem value="male">Male</SelectItem>
                         <SelectItem value="female">Female</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
@@ -185,8 +186,8 @@ export default function GradeReport() {
               </div>
               
               <div className="mb-8">
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-primary-100">Ultrasound Image</Label>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <Label className="text-primary-100">Ultrasound image</Label>
                   <Button
                     type="button"
                     variant="outline"
@@ -194,17 +195,17 @@ export default function GradeReport() {
                     onClick={handleLoadSampleScan}
                     className="text-xs border-primary-500 bg-primary-800 text-primary-100 hover:bg-primary-900 hover:text-white"
                   >
-                    Quick-load Sample Ultrasound
+                    Load sample image
                   </Button>
                 </div>
                 <FileUpload onFileSelect={handleFileSelect} accept="image/*" />
               </div>
               
-              <div className="flex justify-center">
+              <div className="flex justify-end">
                 <Button 
                   onClick={handleGradeImage}
                   disabled={isGrading || !uploadedFile}
-                  className="bg-gradient-to-r from-accent to-accent text-white font-medium py-6 px-8"
+                  className="grade-submit bg-accent text-white font-medium py-6 px-8"
                 >
                   {isGrading ? 'Classifying image...' : 'Classify image'}
                 </Button>
@@ -216,7 +217,7 @@ export default function GradeReport() {
           {uploadedRecord && (
             <>
               <p className="mt-6 text-sm text-primary-300" role="status">
-                Image record {uploadedRecord.id} classified by {uploadedRecord.classification.modelVersion}.
+                Image saved. Draft ready for clinician review.
               </p>
               <GradeResult
                 patientInfo={{
@@ -243,7 +244,7 @@ export default function GradeReport() {
           )}
           
           {/* Floating Chat Button */}
-          <div className="fixed bottom-6 right-6">
+          <div className="fixed bottom-6 right-6 grade-chat-action">
             <button 
               onClick={() => {
                 if (uploadedRecord) {
@@ -251,14 +252,14 @@ export default function GradeReport() {
                   window.open(chatUrl, '_blank', 'noopener,noreferrer');
                 } else {
                   // Open general chat if no grade result
-                  window.open('/chat', '_blank');
+                  window.open(sitePath('chat'), '_blank');
                 }
               }}
-              className="w-14 h-14 bg-gradient-to-r from-secondary-500 to-accent rounded-full flex items-center justify-center shadow-lg hover:opacity-90 transition"
-              title="Discuss this saved ultrasound with MedGemma"
-              aria-label="Discuss this saved ultrasound with MedGemma"
+              className="w-12 h-12 bg-accent rounded-full flex items-center justify-center hover:opacity-90 transition"
+              title="Discuss this saved ultrasound with the demo assistant"
+              aria-label="Discuss this saved ultrasound with the demo assistant"
             >
-              <MessageCircle className="text-white h-6 w-6" />
+              <MessageCircle className="text-white h-5 w-5" />
             </button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Router as WouterRouter, Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -21,7 +21,7 @@ import OrganizationProfile from "@/pages/OrganizationProfile";
 import OAuthCallback from "@/pages/OAuthCallback";
 import CompleteProfile from "@/pages/CompleteProfile";
 
-function Router() {
+function AppRoutes() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
@@ -50,7 +50,13 @@ function App() {
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <aside className="demo-mode-banner" role="status" aria-label="Demo mode">
+            <strong>LivSafe interactive demo</strong>
+            <span>Sample data and simulated outputs · no backend or database</span>
+          </aside>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <AppRoutes />
+          </WouterRouter>
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>

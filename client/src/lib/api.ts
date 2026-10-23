@@ -4,6 +4,7 @@ import {
   mockStore,
   DEFAULT_DOCTOR_USER,
 } from './mockBackend';
+import { sitePath } from '@/lib/utils';
 
 // API Base URL (retained for backward compatibility or optional external proxy)
 const API_BASE_URL = '/api';
@@ -90,12 +91,12 @@ export const doctorAPI = {
     const description = (formData.get('description') as string) || 'Ultrasound scan analysis';
     const imageFile = formData.get('image') as File | null;
 
-    let imageUrl = '/sample-ultrasound.png';
+    let imageUrl = sitePath('sample-ultrasound.png');
     if (imageFile && typeof window !== 'undefined' && window.URL) {
       try {
         imageUrl = URL.createObjectURL(imageFile);
       } catch {
-        imageUrl = '/sample-ultrasound.png';
+        imageUrl = sitePath('sample-ultrasound.png');
       }
     }
 

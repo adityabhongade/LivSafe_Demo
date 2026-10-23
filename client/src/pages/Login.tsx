@@ -84,7 +84,7 @@ export default function Login() {
 
       <section className="py-12 rounded-t-3xl mt-8 bg-gradient-to-br from-violet-800 to-purple-900">
         <div className="max-w-md mx-auto px-6">
-          <div className="rounded-2xl p-8 shadow-lg bg-violet-700 border border-violet-600">
+          <div className="auth-panel rounded-2xl p-8 shadow-lg bg-violet-700 border border-violet-600">
             <h2 className="text-2xl font-bold mb-3 text-center text-white">Login to LivSafe Demo</h2>
             <p className="text-sm text-center text-violet-200 mb-6">
               Self-contained liver ultrasound decision-support prototype

@@ -1,6 +1,6 @@
 # LivSafe Demo
 
-LivSafe Demo is a lightweight, shareable, and fully self-contained interactive prototype of the **LivSafe** liver ultrasound review and fibrosis decision-support platform.
+LivSafe Demo is a lightweight, shareable, and self-contained interactive prototype of the **LivSafe** liver ultrasound review platform. The frontend labels the site as a demo throughout. Records, classifier results, activation maps, and assistant responses are simulated; the demo does not connect to the production backend, database, classifier, or retrieval system.
 
 > [!IMPORTANT]
 > **Clinical Disclaimer**: LivSafe is an investigational prototype and **not a diagnostic medical device**. It is intended strictly for research and clinical workflow demonstration.
@@ -15,11 +15,11 @@ LivSafe Demo is a lightweight, shareable, and fully self-contained interactive p
 ### 2. Run the Demo
 ```bash
 # From the LivSafe_Demo folder:
-npm install
+npm ci
 npm run dev
 ```
 
-Open your browser at **http://localhost:5173**.
+Open your browser at **http://localhost:5173**. The site-wide banner identifies the experience as a demo and notes that its data and outputs are simulated.
 
 ---
 
@@ -55,9 +55,19 @@ Log in with the pre-configured clinician account:
 
 ---
 
-## Architecture & Zero-Dependency Setup
+## Architecture & Self-Contained Demo
 
-Unlike the full system (which requires MongoDB, PyTorch, CUDA, ChromaDB, and local llama.cpp servers), this demo is **100% lightweight**:
+Unlike the full system (which requires MongoDB, PyTorch, CUDA, ChromaDB, and local llama.cpp servers), this demo is self-contained:
 * **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Radix UI.
 * **Dummy Backend**: Built-in mock API engine providing realistic clinical responses, state persistence via browser storage, and zero external database or Python dependencies.
-* **Optional Standalone Backend**: You can also run `npm run server` to run a pure Node.js HTTP server on port 5000 if desired.
+* **Optional Standalone Mock Server**: `npm run server` starts a separate Node.js mock HTTP server on port 5000. The frontend uses the in-browser mock API and does not require this server.
+
+All classifier scores are illustrative and uncalibrated. Assistant responses and citations are examples, not verified clinical guidance. Do not use this demo for patient care.
+
+## GitHub Pages
+
+The `main` branch deploys the static demo through GitHub Actions. In the repository settings, open **Settings → Pages** and set the publishing source to **GitHub Actions**. After pushing to `main`, the workflow builds and publishes the site at:
+
+`https://adityabhongade.github.io/LivSafe_Demo/`
+
+The deployment build uses `/LivSafe_Demo/` as its base path and includes a fallback for direct links to client-side routes. If the repository is renamed, update the base path in `vite.config.ts`, the route fallback in `public/404.html`, and this URL.

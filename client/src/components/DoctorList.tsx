@@ -67,7 +67,7 @@ export function DoctorList({ doctors, onRemoveDoctor, onAddDoctor }: DoctorListP
   // Get unique specialties for filter dropdown
   const uniqueSpecialties = useMemo(() => {
     const specialties = doctors.map(doctor => doctor.specialty);
-    return [...new Set(specialties)].sort();
+    return Array.from(new Set(specialties)).sort();
   }, [doctors]);
 
   const clearFilters = () => {
@@ -76,7 +76,7 @@ export function DoctorList({ doctors, onRemoveDoctor, onAddDoctor }: DoctorListP
   };
 
   return (
-    <div className="bg-primary-700 rounded-xl border border-primary-600 shadow-lg">
+    <div className="doctor-list bg-primary-700 rounded-xl border border-primary-600 shadow-lg">
       {/* Header Section */}
       <div className="p-6 border-b border-primary-500 bg-primary-800">
         <div className="flex justify-between items-center mb-4">

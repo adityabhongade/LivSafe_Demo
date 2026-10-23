@@ -10,8 +10,8 @@
  *   node dummy-backend.js
  */
 
-const http = require('http');
-const url = require('url');
+import http from 'node:http';
+import { parse } from 'node:url';
 
 const PORT = process.env.PORT || 5000;
 
@@ -103,7 +103,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const parsedUrl = url.parse(req.url, true);
+  const parsedUrl = parse(req.url, true);
   const path = parsedUrl.pathname;
 
   let body = '';

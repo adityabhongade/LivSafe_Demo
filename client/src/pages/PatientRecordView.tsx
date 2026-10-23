@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { doctorAPI, medicalImagesAPI } from '@/lib/api';
+import { sitePath } from '@/lib/utils';
 
 export default function PatientRecordView() {
   const { toast } = useToast();
@@ -147,10 +148,10 @@ export default function PatientRecordView() {
       
       // Generate PDF with current data
       
-      // Load and add circular logo
+      // Load and add circular LivSafe logo
       try {
         const { loadCircularImageDataURL } = await import('@/lib/pdfUtils');
-        const logoUrl = (await import('@/lib/images/TR_logo.png')).default as string;
+        const logoUrl = sitePath('logos/livsafe-app-icon.svg');
         const circleDataURL = await loadCircularImageDataURL(logoUrl, 256, { borderColor: '#1f2937', borderWidth: 1.5 });
         doc.addImage(circleDataURL, 'PNG', 20, 15, 28, 28);
       } catch (error) {
@@ -266,7 +267,7 @@ export default function PatientRecordView() {
     return (
       <div className="bg-background min-h-screen">
         <Navbar userType="doctor" showAuthButtons={false} />
-        <section className="py-12 bg-primary-800">
+        <section className="py-12">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center text-white text-xl">Loading patient record...</div>
           </div>
@@ -275,11 +276,12 @@ export default function PatientRecordView() {
     );
   }
 
+
   if (!record) {
     return (
       <div className="bg-background min-h-screen">
         <Navbar userType="doctor" showAuthButtons={false} />
-        <section className="py-12 bg-primary-800">
+        <section className="py-12">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center text-white text-xl">Record not found</div>
             <div className="text-center mt-4">
@@ -300,7 +302,7 @@ export default function PatientRecordView() {
     <div className="bg-background min-h-screen">
       <Navbar userType="doctor" showAuthButtons={false} />
 
-      <section className="py-12 bg-primary-800">
+      <section className="py-12">
         <div className="max-w-4xl mx-auto px-6">
           <div className="mb-8">
             <Link href="/doctor/dashboard">
@@ -312,7 +314,7 @@ export default function PatientRecordView() {
             <h1 className="text-3xl font-bold text-white mt-4">Patient Record Details</h1>
           </div>
 
-          <div className="bg-primary-700 rounded-xl border border-primary-600 p-6 md:p-8">
+          <div className="bg-white rounded-xl border border-primary-600 p-6 md:p-8">
             <div className="flex items-center justify-between mb-6 pb-6 border-b border-primary-600">
               <div>
                 <h2 className="text-2xl font-bold text-white">{record.patientName}</h2>
@@ -399,7 +401,7 @@ export default function PatientRecordView() {
                       <span className="text-primary-300">Uncalibrated model score:</span>
                       <span className="font-medium text-white">{record.confidence}%</span>
                     </div>
-                    <p className="mb-2 text-xs text-amber-200">Not calibrated clinical confidence.</p>
+                    <p className="text-warning mb-2 text-xs">Not calibrated clinical confidence.</p>
                     <div className="w-full bg-primary-600 rounded-full h-2">
                       <div
                         className="bg-accent h-2 rounded-full"
@@ -447,4 +449,3 @@ export default function PatientRecordView() {
     </div>
   );
 }
-

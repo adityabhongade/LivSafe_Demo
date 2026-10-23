@@ -161,9 +161,9 @@ export default function Signup() {
     <div className="bg-background min-h-screen">
       <Navbar />
 
-      <section id="signup" className="py-12 bg-primary-700">
+      <section id="signup" className="py-12">
         <div className="max-w-2xl mx-auto px-6">
-          <div className="bg-primary-800 rounded-2xl p-8 shadow-lg">
+          <div className="auth-panel p-8">
             <h2 className="text-2xl font-bold mb-6 text-white text-center">Create Your Account</h2>
 
             <div className="flex items-center justify-center mb-8">

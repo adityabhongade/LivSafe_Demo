@@ -7,6 +7,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { authAPI } from '@/lib/api';
+import { sitePath } from '@/lib/utils';
 import LoadingDots from '@/components/ui/LoadingDots';
 
 const schema = z.object({
@@ -50,9 +51,9 @@ export default function CompleteProfile() {
       };
       const res = await authAPI.completeOAuthProfile(payload);
       if (res?.data?.type === 'organization') {
-        window.location.href = '/organization/dashboard';
+        window.location.href = sitePath('organization/dashboard');
       } else {
-        window.location.href = '/doctor/dashboard';
+        window.location.href = sitePath('doctor/dashboard');
       }
     } catch (e: any) {
       toast({ variant: 'destructive', title: 'Save failed', description: e.message || 'Please try again', className: 'text-white' });
@@ -69,7 +70,7 @@ export default function CompleteProfile() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6 py-12">
-      <div className={`w-full max-w-xl bg-primary-800 border border-primary-700 rounded-2xl shadow-xl p-8 ${shake ? 'shake-on-error' : ''}`}>
+      <div className={`auth-panel w-full max-w-xl p-8 ${shake ? 'shake-on-error' : ''}`}>
         <h1 className="text-2xl font-bold text-white mb-2">Complete your profile</h1>
         <p className="text-primary-300 mb-6">Link your Google sign-in to a doctor or organization account.</p>
 

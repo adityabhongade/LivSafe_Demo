@@ -7,6 +7,8 @@
  *   Password: user_pass1
  */
 
+import { sitePath } from '@/lib/utils';
+
 export interface MockUser {
   id: string;
   email: string;
@@ -74,7 +76,7 @@ const INITIAL_RECORDS = [
     calibrated: false,
     flags: ['uncalibrated_scores', 'demo_mode'],
     latencyMs: 135,
-    imageUrl: '/sample-ultrasound.png',
+    imageUrl: sitePath('sample-ultrasound.png'),
     description: 'Routine follow-up ultrasound scan for suspected NAFLD progression.',
   },
   {
@@ -102,7 +104,7 @@ const INITIAL_RECORDS = [
     calibrated: false,
     flags: ['uncalibrated_scores', 'demo_mode'],
     latencyMs: 142,
-    imageUrl: '/sample-ultrasound.png',
+    imageUrl: sitePath('sample-ultrasound.png'),
     description: 'Initial assessment for elevated transaminases.',
   },
   {
@@ -130,7 +132,7 @@ const INITIAL_RECORDS = [
     calibrated: false,
     flags: ['uncalibrated_scores', 'demo_mode', 'high_stiffness_suspected'],
     latencyMs: 128,
-    imageUrl: '/sample-ultrasound.png',
+    imageUrl: sitePath('sample-ultrasound.png'),
     description: 'Known chronic hepatitis C with clinical suspicion of advanced cirrhosis.',
   },
   {
@@ -158,7 +160,7 @@ const INITIAL_RECORDS = [
     calibrated: false,
     flags: ['uncalibrated_scores', 'demo_mode'],
     latencyMs: 119,
-    imageUrl: '/sample-ultrasound.png',
+    imageUrl: sitePath('sample-ultrasound.png'),
     description: 'Baseline health screening; normal liver morphology.',
   },
   {
@@ -186,7 +188,7 @@ const INITIAL_RECORDS = [
     calibrated: false,
     flags: ['uncalibrated_scores', 'demo_mode'],
     latencyMs: 145,
-    imageUrl: '/sample-ultrasound.png',
+    imageUrl: sitePath('sample-ultrasound.png'),
     description: 'Severe non-alcoholic steatohepatitis (MASH) review.',
   },
 ];
@@ -566,7 +568,7 @@ export async function handleMockApi(path: string, options: RequestInit = {}): Pr
       success: true,
       data: {
         response: reply,
-        model: 'medgemma-27b-it-demo',
+        model: 'livsafe-assistant-demo',
         status: 'draft',
         citations,
         retrievedChunks,
@@ -596,8 +598,8 @@ export async function handleMockApi(path: string, options: RequestInit = {}): Pr
         disclaimer: 'Decision support only. Not a diagnosis. Requires clinician review.',
         persisted: false,
         provenance: {
-          model: 'medgemma-27b-it-demo',
-          promptVersion: 'medgemma-ultrasound-visual-draft-v1',
+          model: 'livsafe-visual-review-demo',
+          promptVersion: 'livsafe-visual-review-demo-v1',
           retrievedChunkIds: ['easl_2021_sec2', 'wfumb_2018_sec3'],
           retrievedSources: [
             { title: 'EASL Non-invasive Guidelines', source: 'Journal of Hepatology', year: '2021' },

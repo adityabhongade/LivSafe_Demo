@@ -1,0 +1,143 @@
+/* Shared LivSafe workspace styling: soft green, warm paper and a small vermilion signal. */
+:root {
+  --ground: #f6f3e9;
+  --surface: #e6efe2;
+  --surface-raised: #fffdf7;
+  --ink: #233b31;
+  --muted: #65756b;
+  --accent: #d94b36;
+  --accentInk: #fffaf2;
+  --field: #fffdf7;
+  --rule: #cbd8c9;
+  --sage: #a9c6a2;
+  --warning: #a44634;
+  --warning-wash: #f8e9e3;
+  --warning-rule: #e1b5a9;
+}
+
+html, body, #root { min-height: 100%; background: var(--ground); color: var(--ink); }
+body { font-family: Arial, Helvetica, sans-serif; font-size: 15px; }
+#root { font-family: Arial, Helvetica, sans-serif; }
+h1, h2, h3, h4, h5, h6 { font-family: Arial, Helvetica, sans-serif; color: var(--ink); }
+h1.text-3xl { font-size: clamp(1.35rem, 1.2rem + .55vw, 1.7rem) !important; }
+a { color: inherit; }
+
+/* Retain the legacy utility vocabulary while assigning it a single light palette. */
+.bg-background, .bg-primary-950, .bg-primary-900, .bg-neutral-900 { background-color: var(--ground) !important; }
+.bg-primary-800, .bg-primary-700, .bg-primary-600, .bg-primary-500 { background-color: var(--surface) !important; }
+.bg-white, .bg-black { background-color: var(--surface-raised) !important; }
+.border-primary-700, .border-primary-600, .border-primary-500,
+.border-neutral-700, .border-violet-700, .border-violet-600, .border-violet-500,
+.border-violet-400 { border-color: var(--rule) !important; }
+.text-primary-100, .text-primary-200, .text-primary-300, .text-white,
+.text-violet-100, .text-violet-200 { color: var(--ink) !important; }
+.text-primary-400, .text-violet-300 { color: var(--muted) !important; }
+.text-accent, .text-pink-400, .text-rose-400, .text-red-400,
+.text-orange-400, .text-yellow-400, .text-yellow-500 { color: var(--accent) !important; }
+.text-warning { color: var(--warning) !important; }
+.clinical-warning { border: 1px solid var(--warning-rule) !important; background: var(--warning-wash) !important; color: #71382c !important; }
+.bg-accent, .bg-pink-500, .bg-rose-500, .bg-violet-700, .bg-violet-600 { background-color: var(--accent) !important; }
+.legacy-gradient-fill, [class*="bg-gradient-to"] { background-image: none !important; }
+.bg-gradient-to-br, .bg-gradient-to-b, .bg-gradient-to-r { background-color: var(--ground) !important; }
+.bg-accent.text-white, .bg-accent .text-white, .site-nav__signup,
+.landing-button--primary, button.bg-accent { color: var(--accentInk) !important; }
+.login-submit { background: var(--accent) !important; color: var(--accentInk) !important; }
+.brand img { filter: hue-rotate(-110deg) saturate(.6); }
+.text-blue-400, .text-blue-500, .text-green-400, .text-green-500,
+.text-purple-400 { color: var(--muted) !important; }
+.bg-blue-500, .bg-green-500, .bg-orange-500, .bg-yellow-500,
+.bg-red-500, .bg-purple-500 { background-color: var(--sage) !important; }
+
+/* Public shell stays visually aligned with the signed-in workspace. */
+.site-header { background: var(--ground) !important; border-color: var(--rule) !important; }
+.site-header--app .site-nav__actions { border-color: transparent; background: transparent; }
+.site-header--app .site-nav__signup { min-height: 40px; border-radius: 4px; }
+.site-nav__mobile { background: var(--surface-raised); border-color: var(--rule); }
+.site-nav__mobile-link { color: var(--ink); }
+
+.demo-mode-banner {
+  position: sticky;
+  z-index: 70;
+  top: 0;
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 7px 16px;
+  background: #233b31;
+  color: #fffdf7;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: center;
+}
+.demo-mode-banner strong { color: #fffdf7; font-weight: 700; }
+.demo-mode-banner span { color: #e1eee8; }
+
+/* Workspace surfaces and the referral-inspired low-chrome data treatment. */
+.workspace-stat { background: var(--surface-raised); border-color: var(--rule); box-shadow: none; }
+.workspace-stat__icon { display: inline-flex; align-items: center; color: var(--muted); }
+.workspace-stat__icon svg { width: 18px; height: 18px; }
+.draft-status { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 8px; border: 1px solid #cbd8c9; border-radius: 999px; background: #edf3e9; color: #405c47; font-size: 12px; line-height: 1.3; white-space: nowrap; }
+.model-provenance { color: var(--muted); font-size: 13px; }
+.model-provenance summary { width: fit-content; cursor: pointer; color: var(--ink); text-decoration: underline; text-decoration-color: #b8c7b8; text-underline-offset: 3px; }
+.model-provenance code { display: block; margin-top: 8px; color: var(--ink); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; }
+.model-provenance dl { display: grid; gap: 6px; margin: 10px 0 0; }
+.model-provenance dl > div { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 10px; }
+.model-provenance dt { color: var(--muted); }
+.model-provenance dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+.records-table th, .doctor-list th { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: 500; color: var(--muted) !important; }
+.rounded-xl, .rounded-2xl { border-radius: 10px; }
+.shadow-lg, .shadow-xl, .shadow-2xl { box-shadow: none !important; }
+.grade-form, .grade-workspace > div > .bg-primary-700,
+.bg-primary-700.border, .bg-primary-800.border { border-color: var(--rule); }
+
+/* Authentication and information pages use the same paper-and-sage frame. */
+.auth-panel { background: var(--surface-raised); border: 1px solid var(--rule); border-radius: 10px; }
+.clinical-notice { border: 1px solid var(--rule); background: var(--surface); color: var(--ink); }
+
+/* Chat reads as a clinical conversation on paper, with the user's turn set in sage. */
+.chat-workspace { background: var(--ground) !important; color: var(--ink); }
+.chat-workspace__header { background: var(--surface-raised) !important; border-color: var(--rule) !important; }
+.chat-workspace__assistant { background: var(--surface-raised) !important; color: var(--ink) !important; border: 1px solid var(--rule); }
+.chat-workspace__user { background: #dce9d8 !important; color: var(--ink) !important; }
+.chat-workspace .text-white, .chat-workspace strong.text-white,
+.chat-workspace h1.text-white, .chat-workspace h2.text-white,
+.chat-workspace h3.text-white, .chat-workspace h4.text-white { color: var(--ink) !important; }
+.chat-workspace .chat-input { background: var(--surface-raised); border-color: var(--rule); }
+
+/* Keep model provenance legible over the dark image-review lightbox. */
+.gradcam-viewer { background: rgba(14, 24, 20, .97) !important; color: #f7f5ec !important; }
+.gradcam-viewer .gradcam-viewer__bar {
+  background: #203b32 !important;
+  color: #f7f5ec !important;
+  border-color: rgba(247, 245, 236, .2) !important;
+}
+.gradcam-viewer .gradcam-viewer__identity { min-width: 0; max-width: min(72vw, 900px); }
+.gradcam-viewer .gradcam-viewer__title { margin: 0; color: #fff !important; font-size: 19px; line-height: 1.25; }
+.gradcam-viewer .gradcam-viewer__metadata,
+.gradcam-viewer .gradcam-viewer__model { margin: 4px 0 0; color: #e2eee6 !important; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+.gradcam-viewer .gradcam-viewer__metadata span { color: #c5d7ce !important; }
+.gradcam-viewer .gradcam-viewer__model span { color: #b6d4c1 !important; font-weight: 600; margin-right: 4px; }
+.gradcam-viewer .gradcam-viewer__disclaimer { margin: 8px 0 0; color: #d5e4db !important; font-size: 12px; line-height: 1.45; }
+.gradcam-viewer .gradcam-viewer__canvas { background: #111b18 !important; }
+.gradcam-viewer .gradcam-viewer__bar .text-primary-200,
+.gradcam-viewer .gradcam-viewer__bar .text-primary-300,
+.gradcam-viewer .gradcam-viewer__bar .text-primary-400,
+.gradcam-viewer .gradcam-viewer__bar button { color: #e2eee6 !important; }
+.gradcam-viewer .gradcam-viewer__bar button { border-color: rgba(247, 245, 236, .24) !important; }
+.gradcam-viewer .gradcam-viewer__bar button:hover { background: #345648 !important; color: #fff !important; }
+.gradcam-viewer img { border-color: rgba(247, 245, 236, .24) !important; }
+
+@media (max-width: 640px) {
+  .gradcam-viewer .gradcam-viewer__bar { flex-wrap: wrap; gap: 12px; }
+  .gradcam-viewer .gradcam-viewer__identity { max-width: 100%; }
+  .gradcam-viewer .gradcam-viewer__title { font-size: 17px; }
+  .gradcam-viewer .gradcam-viewer__metadata,
+  .gradcam-viewer .gradcam-viewer__model { font-size: 13px; }
+}
+
+@media (max-width: 640px) {
+  .site-nav { width: min(100% - 32px, 1280px); min-height: 64px; }
+  .demo-mode-banner { align-items: flex-start; flex-direction: column; gap: 1px; padding-inline: 18px; }
+}

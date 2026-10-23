@@ -18,17 +18,13 @@ export function StatCard({
   iconBgColor,
 }: StatCardProps) {
   return (
-    <div className="bg-primary-700 rounded-xl p-6 border border-primary-600 shadow-lg hover:shadow-xl transition-all duration-200 hover:border-primary-500">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">{title}</h3>
-        <div
-          className={`w-12 h-12 rounded-full flex items-center justify-center ${iconBgColor} border border-opacity-20 border-white`}
-        >
-          <div className={iconColor}>{icon}</div>
-        </div>
+    <div className="workspace-stat rounded-lg p-5 border border-primary-600 transition-colors duration-200 hover:border-primary-500">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h3 className="text-sm font-medium text-primary-200">{title}</h3>
+        <span className="workspace-stat__icon" aria-hidden="true">{icon}</span>
       </div>
-      <p className="text-3xl font-bold text-white mb-1">{value}</p>
-      {change && <p className="text-sm text-primary-200 font-medium">{change}</p>}
+      <p className="text-3xl font-semibold text-white mb-1 tabular-nums">{value}</p>
+      {change && <p className="text-sm text-primary-200">{change}</p>}
     </div>
   );
 }

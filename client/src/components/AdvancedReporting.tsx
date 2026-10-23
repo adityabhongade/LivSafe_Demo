@@ -16,6 +16,8 @@ import {
   Eye,
   Printer
 } from 'lucide-react';
+import { sitePath } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface ReportConfig {
   type: 'doctors' | 'patients' | 'records' | 'analytics' | 'comprehensive';
@@ -33,6 +35,7 @@ interface ReportConfig {
 }
 
 export function AdvancedReporting() {
+  const { toast } = useToast();
   const [reportConfig, setReportConfig] = useState<ReportConfig>({
     type: 'comprehensive',
     format: 'pdf',
@@ -240,7 +243,7 @@ Filters applied:
       // Load and add circular logo
       try {
         const { loadCircularImageDataURL } = await import('@/lib/pdfUtils');
-        const logoUrl = (await import('@/lib/images/TR_logo.png')).default as string;
+        const logoUrl = sitePath('logos/livsafe-app-icon.svg');
         const circleDataURL = await loadCircularImageDataURL(logoUrl, 256, { borderColor: '#1f2937', borderWidth: 1.5 });
         doc.addImage(circleDataURL, 'PNG', 20, 15, 28, 28);
       } catch (error) {

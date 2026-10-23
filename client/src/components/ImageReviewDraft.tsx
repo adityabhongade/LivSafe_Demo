@@ -57,7 +57,7 @@ export function ImageReviewDraft({ medicalImageId }: ImageReviewDraftProps) {
           </div>
           <h2 id="image-draft-title" className="text-xl font-semibold text-white">Ultrasound image review</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-primary-200">
-            MedGemma can describe visible image features. It does not grade fibrosis, and this draft has no retrieved guideline context.
+            The assistant can describe visible image features. It does not grade fibrosis or provide guideline-based recommendations.
           </p>
         </div>
         <button
@@ -79,7 +79,7 @@ export function ImageReviewDraft({ medicalImageId }: ImageReviewDraftProps) {
 
       {draft && (
         <div className="mt-6 border-t border-primary-600 pt-5" aria-live="polite">
-          <p className="mb-5 text-sm font-medium text-amber-200">Draft, not saved. Requires clinician review.</p>
+          <p className="text-warning mb-5 text-sm font-medium">Draft, not saved. Requires clinician review.</p>
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="font-medium text-white">Visible observations</h3>
@@ -100,18 +100,28 @@ export function ImageReviewDraft({ medicalImageId }: ImageReviewDraftProps) {
               <p className="mt-2 text-sm leading-6 text-primary-200">{draft.content.uncertainty_note}</p>
             </div>
           </div>
-          <p className="mt-5 border-t border-primary-600 pt-4 text-xs leading-5 text-primary-300">
-            {draft.disclaimer} Model: {draft.provenance.model}. Prompt: {draft.provenance.promptVersion}.
-            {draft.provenance.retrievedChunkIds && draft.provenance.retrievedChunkIds.length > 0
-              ? ` Grounded in ${draft.provenance.retrievedChunkIds.length} guideline chunks from liver_fibrosis_vectordb.`
-              : ' No source documents were retrieved.'}
-          </p>
+          <div className="mt-5 border-t border-primary-600 pt-4">
+            <p className="text-sm leading-5 text-primary-300">
+              {draft.disclaimer}{' '}
+              {draft.provenance.retrievedChunkIds.length > 0
+                ? `Supported by ${draft.provenance.retrievedChunkIds.length} retrieved passages.`
+                : 'No supporting sources were retrieved for this draft.'}
+            </p>
+            <details className="model-provenance mt-3">
+              <summary>Draft provenance</summary>
+              <dl>
+                <div><dt>Model</dt><dd>{draft.provenance.model}</dd></div>
+                <div><dt>Prompt version</dt><dd>{draft.provenance.promptVersion}</dd></div>
+                <div><dt>Retrieved passages</dt><dd>{draft.provenance.retrievedChunkIds.length}</dd></div>
+              </dl>
+            </details>
+          </div>
         </div>
       )}
 
       <Link
         href={`/chat?medicalImageId=${encodeURIComponent(medicalImageId)}`}
-        className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md border border-pink-400 bg-pink-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:border-pink-300 hover:bg-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-700"
+        className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md border border-primary-500 bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary-700"
       >
         <MessageCircle aria-hidden="true" size={17} />
         Start conversation with assistant

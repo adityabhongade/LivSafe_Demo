@@ -109,7 +109,7 @@ export default function OrganizationProfile() {
     return (
       <div className="bg-background min-h-screen">
         <Navbar userType="organization" showAuthButtons={false} />
-        <section className="py-12 bg-primary-800">
+        <section className="py-12">
           <div className="max-w-4xl mx-auto px-6">
             <div className="text-center text-white text-xl">Loading profile...</div>
           </div>
@@ -122,7 +122,7 @@ export default function OrganizationProfile() {
     <div className="bg-background min-h-screen">
       <Navbar userType="organization" showAuthButtons={false} />
 
-      <section className="py-12 bg-primary-800">
+      <section className="py-12">
         <div className="max-w-4xl mx-auto px-6">
           <div className="mb-8">
             <Link href="/organization/dashboard">
@@ -140,7 +140,7 @@ export default function OrganizationProfile() {
             </p>
           </div>
 
-          <div className="bg-primary-700 rounded-xl border border-primary-600 p-6 md:p-8">
+          <div className="bg-white rounded-xl border border-primary-600 p-6 md:p-8">
             <div className="flex items-center justify-center mb-8">
               <div className="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center">
                 <Building2 className="h-10 w-10 text-white" />

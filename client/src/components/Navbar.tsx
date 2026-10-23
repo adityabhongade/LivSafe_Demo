@@ -11,7 +11,11 @@ interface NavbarProps {
 
 export function Navbar({ showAuthButtons = true, userType = null, variant = 'app' }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const links = userType === 'doctor'
+  const links = variant === 'public'
+    ? [
+        { href: '/about', label: 'About' },
+      ]
+    : userType === 'doctor'
     ? [
         { href: '/doctor/dashboard', label: 'Dashboard' },
         { href: '/doctor/search', label: 'Search' },
@@ -31,7 +35,7 @@ export function Navbar({ showAuthButtons = true, userType = null, variant = 'app
   return (
     <header className={`site-header site-header--${variant}`}>
       <nav className="site-nav" aria-label="Main navigation">
-        <Logo theme={variant === 'public' ? 'dark' : 'light'} onNavigate={closeMenu} />
+        <Logo theme="light" onNavigate={closeMenu} />
 
         <div className="site-nav__links">
           {links.map((link) => (
@@ -43,11 +47,14 @@ export function Navbar({ showAuthButtons = true, userType = null, variant = 'app
 
         {showAuthButtons && (
           <div className="site-nav__actions">
-            <Link href="/login" className="site-nav__login">Log in</Link>
-            <Link href="/signup" className="site-nav__signup">
-              <span>Create</span>
-              <span>account</span>
-            </Link>
+            {variant === 'public' ? (
+              <>
+                <Link href="/signup" className="site-nav__login">Create account</Link>
+                <Link href="/login" className="site-nav__signup"><span>Sign in</span></Link>
+              </>
+            ) : (
+              <Link href="/login" className="site-nav__login">Log in</Link>
+            )}
           </div>
         )}
 
@@ -70,10 +77,14 @@ export function Navbar({ showAuthButtons = true, userType = null, variant = 'app
           ))}
           {showAuthButtons && (
             <>
-              <Link href="/login" className="site-nav__mobile-link" onClick={closeMenu}>Log in</Link>
-              <Link href="/signup" className="site-nav__mobile-link site-nav__mobile-link--cta" onClick={closeMenu}>
-                Create account
-              </Link>
+              {variant === 'public' ? (
+                <>
+                  <Link href="/signup" className="site-nav__mobile-link" onClick={closeMenu}>Create account</Link>
+                  <Link href="/login" className="site-nav__mobile-link site-nav__mobile-link--cta" onClick={closeMenu}>Sign in</Link>
+                </>
+              ) : (
+                <Link href="/login" className="site-nav__mobile-link" onClick={closeMenu}>Log in</Link>
+              )}
             </>
           )}
         </div>

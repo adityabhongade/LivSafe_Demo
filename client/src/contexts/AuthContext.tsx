@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authAPI } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { sitePath } from '@/lib/utils';
 
 interface User {
   id: string;
@@ -90,11 +91,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Redirect based on user type
         setTimeout(() => {
           if (userData.type === 'organization') {
-            window.location.href = '/organization/dashboard';
+            window.location.href = sitePath('organization/dashboard');
           } else if (userData.type === 'doctor') {
-            window.location.href = '/doctor/dashboard';
+            window.location.href = sitePath('doctor/dashboard');
           } else if (userData.type === 'oauth') {
-            window.location.href = '/complete-profile';
+            window.location.href = sitePath('complete-profile');
           }
         }, 100);
         
@@ -130,11 +131,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         // Redirect based on user type
         setTimeout(() => {
           if (userData.type === 'organization') {
-            window.location.href = '/organization/dashboard';
+            window.location.href = sitePath('organization/dashboard');
           } else if (userData.type === 'doctor') {
-            window.location.href = '/doctor/dashboard';
+            window.location.href = sitePath('doctor/dashboard');
           } else if (userData.type === 'oauth') {
-            window.location.href = '/complete-profile';
+            window.location.href = sitePath('complete-profile');
           }
         }, 100);
         
