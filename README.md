@@ -55,6 +55,28 @@ Log in with the pre-configured clinician account:
 
 ---
 
+## Reference
+
+
+
+---
+
+```bibtex
+@Article{livscp,
+AUTHOR = {Dubey, Yogita and Bhongade, Aditya and Fulzele, Punit},
+TITLE = {LivSCP: Improving Liver Fibrosis Classification Through Supervised Contrastive Pretraining},
+JOURNAL = {Diagnostics},
+VOLUME = {15},
+YEAR = {2025},
+NUMBER = {24},
+ARTICLE-NUMBER = {3226},
+URL = {https://www.mdpi.com/2075-4418/15/24/3226},
+PubMedID = {41464225},
+ISSN = {2075-4418},
+DOI = {10.3390/diagnostics15243226}
+}
+```
+
 ## Architecture & Self-Contained Demo
 
 Unlike the full system (which requires MongoDB, PyTorch, CUDA, ChromaDB, and local llama.cpp servers), this demo is self-contained:
@@ -63,11 +85,3 @@ Unlike the full system (which requires MongoDB, PyTorch, CUDA, ChromaDB, and loc
 * **Optional Standalone Mock Server**: `npm run server` starts a separate Node.js mock HTTP server on port 5000. The frontend uses the in-browser mock API and does not require this server.
 
 All classifier scores are illustrative and uncalibrated. Assistant responses and citations are examples, not verified clinical guidance. Do not use this demo for patient care.
-
-## GitHub Pages
-
-The `main` branch deploys the static demo through GitHub Actions. In the repository settings, open **Settings → Pages** and set the publishing source to **GitHub Actions**. After pushing to `main`, the workflow builds and publishes the site at:
-
-`https://adityabhongade.github.io/LivSafe_Demo/`
-
-The deployment build uses `/LivSafe_Demo/` as its base path and includes a fallback for direct links to client-side routes. If the repository is renamed, update the base path in `vite.config.ts`, the route fallback in `public/404.html`, and this URL.
