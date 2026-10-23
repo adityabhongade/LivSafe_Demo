@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /doctor/
+Disallow: /organization/
+Disallow: /chat
+Disallow: /complete-profile
+Disallow: /oauth/
+Disallow: /update-password
+
+Sitemap: https://adityabhongade.github.io/LivSafe_Demo/sitemap.xml

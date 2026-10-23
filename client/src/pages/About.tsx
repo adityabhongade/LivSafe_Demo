@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
+import { SEO } from '@/components/SEO';
 import { useAuth } from '@/contexts/AuthContext';
 import './About.css';
 
@@ -47,6 +48,12 @@ function AboutPage() {
 
   return (
     <div className="about-page">
+      <SEO
+        title="About LivSafe | Research Prototype"
+        description="Learn about the LivSafe liver ultrasound review prototype, its research context, contributors, and the simulated nature and limitations of its outputs."
+        path="/about"
+        indexable
+      />
       <Navbar variant={user ? 'app' : 'public'} userType={userType} showAuthButtons={!user} />
       <main className="about-main">
         <section className="about-content" aria-labelledby="about-title">
@@ -55,12 +62,21 @@ function AboutPage() {
             This site is an interactive demo. Its records, classifier results, activation maps, and assistant replies are simulated; it has no production backend or database.
           </p>
           <p className="about-method-note">
-            LivSafe’s research includes{' '}
+            LivSafe is powered by ViT for liver fibrosis classification from ultrasound scans and MedGemma 27B with RAG on a custom knowledge base. The classifier performance is maximized by{' '}
             <a href="https://www.mdpi.com/2075-4418/15/24/3226" target="_blank" rel="noreferrer">
               LivSCP
             </a>.
           </p>
-
+          <p className="about-method-note">
+            To request the complete code or address any correspondence, please contact{' '}
+            <a href="mailto:aabhongade@ycce.edu" target="_blank" rel="noreferrer">
+              aabhongade@ycce.edu
+            </a> / <a href="mailto:adityabhongade24@gmail.com" target="_blank" rel="noreferrer">
+              adityabhongade24@gmail.com
+            </a> OR <a href="mailto:aniketbhandwalkar83@gmail.com" target="_blank" rel="noreferrer">
+              aniketbhandwalkar83@gmail.com
+            </a>.
+          </p>
           <section className="about-citation" aria-labelledby="citation-title">
             <div className="about-citation__heading">
               <h2 id="citation-title">BibTeX</h2>
